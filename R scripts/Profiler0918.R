@@ -17,14 +17,14 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
       
       for(i in highADE){
         maxt<-rnorm(1,mean=2.331907,sd = 1.728949)
-        while(maxt>7.251596){
+        while(maxt>7.251596 || maxt<0){
           maxt<-rnorm(1,mean=2.331907,sd = 1.728949)
         }
         gene_name[i,seq(2,replicate+1)]<-maxt
       }
       for(i in highBDE){
         maxt<-rnorm(1,mean=2.331907,sd = 1.728949)
-        while(maxt>7.251596){
+        while(maxt>7.251596 || maxt<0){
           maxt<-rnorm(1,mean=2.331907,sd = 1.728949)
         }
         gene_name[i,seq(replicate+2,(2*replicate)+1)]<-maxt
@@ -33,14 +33,14 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
       
       for(i in midADE){
         maxt<-rnorm(1,mean=2.285371,sd = 1.697909)
-        while(maxt>4.800113){
+        while(maxt>4.800113 || maxt<0){
           maxt<-rnorm(1,mean=2.285371,sd = 1.697909)
         }
         gene_name[i,seq(2,replicate+1)]<-maxt
       }
       for(i in midBDE){
         maxt<-rnorm(1,mean=2.285371,sd = 1.697909)
-        while(maxt>4.800113){
+        while(maxt>4.800113 || maxt<0){
           maxt<-rnorm(1,mean=2.285371,sd = 1.697909)
         }
         gene_name[i,seq(replicate+2,(2*replicate)+1)]<-maxt
@@ -49,18 +49,20 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
       
       for(i in lowADE){
         maxt<-rnorm(1,mean=2.050947,sd = 1.498367)
-        while(maxt>4.536703){
+        while(maxt>4.536703 || maxt<0){
           maxt<-rnorm(1,mean=2.050947,sd = 1.498367)
         }
         gene_name[i,seq(2,replicate+1)]<-maxt
       }
       for(i in lowBDE){
         maxt<-rnorm(1,mean=2.050947,sd = 1.498367)
-        while(maxt>4.536703){
+        while(maxt>4.536703 || maxt<0){
           maxt<-rnorm(1,mean=2.050947,sd = 1.498367)
         }
         gene_name[i,seq(replicate+2,(2*replicate)+1)]<-maxt
       }
+      
+      print('Different part of DE')
       
       temp<-gene_name!=0
       temp[,1]<-F
@@ -93,18 +95,27 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
         gene_name[i,-1]<-10^rnorm(n = 1,mean = 1.945505,sd = 1.003944)
       }
 
-    
+    print('NOISED')
       
     merged_profile<-merge(flux_profile,gene_name,by.x = 'gene_id',by.y = 'gene_name')
+    merged_profile_noised<-merged_profile
+##  
+    for(DEgroup in c(highDE,middleDE,lowDE,unDE)){
+      merged_profile_noised[DEgroup,group_A]<-merged_profile[DEgroup,group_A]+rnorm(length(group_A),mean=0,sd=0.07*sum(merged_profile[DEgroup,group_A]))
+      while(sum(merged_profile_noised[DEgroup,group_A]<0)>0){
+          merged_profile_noised[DEgroup,group_A]<-merged_profile[DEgroup,group_A]+rnorm(length(group_A),mean=0,sd=0.07*sum(merged_profile[DEgroup,group_A]))  
+          print('Whala, Failed!!')
+          }
+      merged_profile_noised[DEgroup,group_B]<-merged_profile[DEgroup,group_B]+rnorm(length(group_B),mean=0,sd=0.07*sum(merged_profile[DEgroup,group_B]))
+      while(sum(merged_profile_noised[DEgroup,group_B]<0)>0){
+         merged_profile_noised[DEgroup,group_B]<-merged_profile[DEgroup,group_B]+rnorm(length(group_A),mean=0,sd=0.07*sum(merged_profile[DEgroup,group_B]))  
+         print('Whala, Failed!!')
+          }
+      }
+    
+    merged_profile<-merged_profile_noised
+    rm(merged_profile_noised)
 
-##    
-    for(row in c(highDE,middleDE,lowDE,unDE)){
-      merged_profile[row,group_A]<-merged_profile[row,group_A]+rnorm(length(group_A),mean=0,sd=0.07*sum(merged_profile[row,group_A]))
-      merged_profile[row,group_B]<-merged_profile[row,group_B]+rnorm(length(group_B),mean=0,sd=0.07*sum(merged_profile[row,group_B]))
-      print(row)
-    }
-    
-    
     for(x in colnames(gene_name[,-1])){
     merged_profile_specified<-data.frame(merged_profile[,1],merged_profile[,2],merged_profile[,3],merged_profile[,4],as.integer(merged_profile[[x]]))
     merged_profile_specified$ratio<-0
@@ -123,7 +134,9 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
   flux_profile<-data.frame(t$V1,t$V2,t$V3,t$V4)
   colnames(flux_profile)<-c('chr_position','gene_id','region','gene_length')
   gene_name<-levels(flux_profile$gene_id)
-
+  
+  print('set seed')
+  
   set.seed(11111)
   index_gene<-seq(1:length(gene_name))
   highDE<-sample(index_gene,1200)
@@ -133,6 +146,7 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
   DEed<-c(DEed,lowDE)
   unDE<-sample(index_gene[-DEed],2000)
 
+  print('DElists')
 
   HA<-createDataPartition(highDE,p=0.5)
   highADE<-highDE[HA$Resample1]
@@ -146,6 +160,7 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
 
   gene_name<-data.frame(gene_name)
 
+  print('Profile making')
 
   makeprofile()
 

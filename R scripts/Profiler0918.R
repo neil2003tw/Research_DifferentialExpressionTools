@@ -17,14 +17,14 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
       
       for(i in highADE){
         maxt<-rnorm(1,mean=2.331907,sd = 1.728949)
-        while(maxt>7.251596 || maxt<0){
+        while(maxt>7.04 || maxt<0){
           maxt<-rnorm(1,mean=2.331907,sd = 1.728949)
         }
         gene_name[i,seq(2,replicate+1)]<-maxt
       }
       for(i in highBDE){
         maxt<-rnorm(1,mean=2.331907,sd = 1.728949)
-        while(maxt>7.251596 || maxt<0){
+        while(maxt>7.04 || maxt<0){
           maxt<-rnorm(1,mean=2.331907,sd = 1.728949)
         }
         gene_name[i,seq(replicate+2,(2*replicate)+1)]<-maxt
@@ -70,29 +70,57 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
       
       for(i in highADE){
         gene_name[i,seq(replicate+2,(2*replicate)+1)]<-gene_name[i,seq(2,replicate+1)]*10^(10^rnorm(n=1,mean=-0.5829726,sd = 0.1976209))
+        while(gene_name[i,replicate+2]>15000000){
+        gene_name[i,seq(replicate+2,(2*replicate)+1)]<-gene_name[i,seq(2,replicate+1)]*10^(10^rnorm(n=1,mean=-0.5829726,sd = 0.1976209))
+        print('gotcha highDE')
+        }
       }
       for(i in highBDE){
         gene_name[i,seq(2,replicate+1)]<-gene_name[i,seq(replicate+2,(2*replicate)+1)]*10^(10^rnorm(n=1,mean=-0.5829726,sd = 0.1976209))
+        while(gene_name[i,2]>15000000){
+        gene_name[i,seq(2,replicate+1)]<-gene_name[i,seq(replicate+2,(2*replicate)+1)]*10^(10^rnorm(n=1,mean=-0.5829726,sd = 0.1976209))
+        print('gotcha highDE')
+        }
       }
       
       
       for(i in midADE){
         gene_name[i,seq(replicate+2,(2*replicate)+1)]<-gene_name[i,seq(2,replicate+1)]*10^(10^rnorm(n=1,mean=-0.9013155,sd = 0.2863447))
+        while(gene_name[i,replicate+2]>15000000){
+        gene_name[i,seq(replicate+2,(2*replicate)+1)]<-gene_name[i,seq(2,replicate+1)]*10^(10^rnorm(n=1,mean=-0.9013155,sd = 0.2863447))
+        print('gotcha midDE')
+        }
       }
       for(i in midBDE){
         gene_name[i,seq(2,replicate+1)]<-gene_name[i,seq(replicate+2,(2*replicate)+1)]*10^(10^rnorm(n=1,mean=-0.9013155,sd = 0.2863447))
+        while(gene_name[i,2]>15000000){
+        gene_name[i,seq(2,replicate+1)]<-gene_name[i,seq(replicate+2,(2*replicate)+1)]*10^(10^rnorm(n=1,mean=-0.9013155,sd = 0.2863447))
+        print('gotcha midDE')
+        }
       }
       
       
       for(i in lowADE){
         gene_name[i,seq(replicate+2,(2*replicate)+1)]<-gene_name[i,seq(2,replicate+1)]*10^(10^rnorm(n=1,mean=-1.0660038,sd = 0.4639797))
+        while(gene_name[i,replicate+2]>15000000){
+        gene_name[i,seq(replicate+2,(2*replicate)+1)]<-gene_name[i,seq(2,replicate+1)]*10^(10^rnorm(n=1,mean=-1.0660038,sd = 0.4639797))
+        print('gotcha lowDE')
+        }
       }
       for(i in lowBDE){
         gene_name[i,seq(2,replicate+1)]<-gene_name[i,seq(replicate+2,(2*replicate)+1)]*10^(10^rnorm(n=1,mean=-1.0660038,sd = 0.4639797))
+        while(gene_name[i,2]>15000000){
+        gene_name[i,seq(2,replicate+1)]<-gene_name[i,seq(replicate+2,(2*replicate)+1)]*10^(10^rnorm(n=1,mean=-1.0660038,sd = 0.4639797))
+        print('gotcha lowDE')
+        }
       }
       
       for(i in unDE){
         gene_name[i,-1]<-10^rnorm(n = 1,mean = 1.945505,sd = 1.003944)
+        while(mean(gene_name[i,2])>10000000){
+          gene_name[i,-1]<-10^rnorm(n = 1,mean = 1.945505,sd = 1.003944)
+          print('gotcha unDE')
+        }
       }
 
     print('NOISED')
@@ -104,12 +132,12 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
       merged_profile_noised[DEgroup,group_A]<-merged_profile[DEgroup,group_A]+rnorm(length(group_A),mean=0,sd=0.07*sum(merged_profile[DEgroup,group_A]))
       while(sum(merged_profile_noised[DEgroup,group_A]<0)>0){
           merged_profile_noised[DEgroup,group_A]<-merged_profile[DEgroup,group_A]+rnorm(length(group_A),mean=0,sd=0.07*sum(merged_profile[DEgroup,group_A]))  
-          print('Whala, Failed!!')
+          print('Whala, negative caught!')
           }
       merged_profile_noised[DEgroup,group_B]<-merged_profile[DEgroup,group_B]+rnorm(length(group_B),mean=0,sd=0.07*sum(merged_profile[DEgroup,group_B]))
       while(sum(merged_profile_noised[DEgroup,group_B]<0)>0){
-         merged_profile_noised[DEgroup,group_B]<-merged_profile[DEgroup,group_B]+rnorm(length(group_A),mean=0,sd=0.07*sum(merged_profile[DEgroup,group_B]))  
-         print('Whala, Failed!!')
+          merged_profile_noised[DEgroup,group_B]<-merged_profile[DEgroup,group_B]+rnorm(length(group_A),mean=0,sd=0.07*sum(merged_profile[DEgroup,group_B]))  
+          print('Whala, negative caught!')
           }
       }
     
@@ -139,12 +167,12 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
   
   set.seed(11111)
   index_gene<-seq(1:length(gene_name))
-  highDE<-sample(index_gene,1200)
-  middleDE<-sample(index_gene[-highDE],1200)
+  highDE<-sample(index_gene,2000)
+  middleDE<-sample(index_gene[-highDE],2000)
   DEed<-c(highDE,middleDE)
-  lowDE<-sample(index_gene[-DEed],1200)
+  lowDE<-sample(index_gene[-DEed],2000)
   DEed<-c(DEed,lowDE)
-  unDE<-sample(index_gene[-DEed],2000)
+  unDE<-sample(index_gene[-DEed],3000)
 
   print('DElists')
 

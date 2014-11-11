@@ -13,3 +13,4 @@ list_profile<-lapply(ls(pattern = 'profile[AB][0-9]'), function(x) get(x))
 count_table<-Reduce(function(x, y) merge(x, y, all=TRUE), list_profile)
 count_table[is.na(count_table)]<-0
 count_table<-data.frame(count_table[,-1],row.names=count_table[,1])
+rm(list=datas)

@@ -1,5 +1,6 @@
-DESeq_pile <- function(count_table) {
+DESeq_pile <- function(count_table,normal,control) {
 library(DESeq)
+count_table<-count_table[,c(seq(1,normal),(dim(count_table)[2]/2)+seq(1,control))]
 condition<-c(substr(colnames(count_table),1,1))
 cds<-newCountDataSet(count_table,condition)
 cds<-estimateSizeFactors(cds)

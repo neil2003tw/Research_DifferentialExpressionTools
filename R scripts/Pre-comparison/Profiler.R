@@ -167,12 +167,12 @@ flux_profile_maker<-function(name,profiledata,replicate=1){
   
   set.seed(11111)
   index_gene<-seq(1:length(gene_name))
-  highDE<-sample(index_gene,2000)
-  middleDE<-sample(index_gene[-highDE],2000)
+  highDE<-sample(index_gene,500)
+  middleDE<-sample(index_gene[-highDE],500)
   DEed<-c(highDE,middleDE)
-  lowDE<-sample(index_gene[-DEed],2000)
+  lowDE<-sample(index_gene[-DEed],500)
   DEed<-c(DEed,lowDE)
-  unDE<-sample(index_gene[-DEed],12000)
+  unDE<-sample(index_gene[-DEed],21000)
 
   print('DElists')
 

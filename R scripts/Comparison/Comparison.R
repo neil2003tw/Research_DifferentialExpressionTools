@@ -1,6 +1,12 @@
 
 recursivecomparison<-function(normalnum,controlnum,data_folder,output_folder='./'){
 
+
+#source('/NFSShare/neil/DEtools/working_dir/DifferentialExpressionTools/R scripts/Comparison/Tools/Odds.R')
+#source('/NFSShare/neil/DEtools/working_dir/DifferentialExpressionTools/R scripts/Comparison/Tools/Pipe.R')
+#source('/NFSShare/neil/DEtools/working_dir//DifferentialExpressionTools/R scripts/Comparison/Tools/DEcomparison.R')
+  
+  
 source('/Users/NeilWu/Github/DifferentialExpressionTools/R scripts/Comparison/Tools/Odds.R')
 source('/Users/NeilWu/Github/DifferentialExpressionTools/R scripts/Comparison/Tools/Pipe.R')
 source('/Users/NeilWu/Github/DifferentialExpressionTools/R scripts/Comparison/Tools/DEcomparison.R')
